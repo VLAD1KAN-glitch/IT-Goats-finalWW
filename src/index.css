@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-color: #F8F9FA;
+    --surface-color: #FFFFFF;
+    --surface-variant-color: #E1E2EC;
+    --on-surface-color: #1B1B1F;
+    --on-surface-variant-color: #44474E;
+    
+    --primary-color: #0061A4;
+    --on-primary-color: #FFFFFF;
+    --primary-container-color: #D3E3FD;
+    --on-primary-container-color: #041E49;
+    
+    --secondary-color: #535F70;
+    --secondary-container-color: #E3E3E3;
+    
+    --error-color: #BA1A1A;
+    --error-container-color: #F9DEDC;
+    --on-error-container-color: #410E0B;
+    --on-error-color: #FFFFFF;
+    
+    --outline-color: #74777F;
+    --outline-variant-color: #C4C6D0;
+  }
+
+  .dark {
+    --bg-color: #0F1318;
+    --surface-color: #181C22;
+    --surface-variant-color: #43474E;
+    --on-surface-color: #E2E2E6;
+    --on-surface-variant-color: #C4C6D0;
+    
+    --primary-color: #A1C9FF;
+    --on-primary-color: #00325A;
+    --primary-container-color: #00497D;
+    --on-primary-container-color: #D1E4FF;
+    
+    --secondary-color: #BBC7DB;
+    --secondary-container-color: #3B4858;
+    
+    --error-color: #FFB4AB;
+    --error-container-color: #93000A;
+    --on-error-container-color: #FFDAD6;
+    --on-error-color: #690005;
+    
+    --outline-color: #8C9199;
+    --outline-variant-color: #44474E;
+  }
+}
+
+@theme {
+  --font-sans: "Product Sans", "Google Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-m3-bg: var(--bg-color);
+  --color-m3-surface: var(--surface-color);
+  --color-m3-surface-variant: var(--surface-variant-color);
+  --color-m3-on-surface: var(--on-surface-color);
+  --color-m3-on-surface-variant: var(--on-surface-variant-color);
+  
+  --color-m3-primary: var(--primary-color);
+  --color-m3-on-primary: var(--on-primary-color);
+  --color-m3-primary-container: var(--primary-container-color);
+  --color-m3-on-primary-container: var(--on-primary-container-color);
+  
+  --color-m3-secondary: var(--secondary-color);
+  --color-m3-secondary-container: var(--secondary-container-color);
+  
+  --color-m3-error: var(--error-color);
+  --color-m3-error-container: var(--error-container-color);
+  --color-m3-on-error-container: var(--on-error-container-color);
+  --color-m3-on-error: var(--on-error-color);
+  
+  --color-m3-outline: var(--outline-color);
+  --color-m3-outline-variant: var(--outline-variant-color);
+}
+
+body {
+  background-color: var(--color-m3-bg);
+  color: var(--color-m3-on-surface);
+  font-family: var(--font-sans);
+  transition: background-color 300ms cubic-bezier(0.2, 0, 0, 1), color 300ms cubic-bezier(0.2, 0, 0, 1);
+  min-height: 100vh;
+}
+
+/* Base animated draw effect for checkboxes */
+.check-draw path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: dash 300ms cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.m3-elevation-1 {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+.m3-elevation-2 {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+.m3-elevation-3 {
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Material 3 Hover & Active Overlay */
+button, a.inline-flex, a.inline-block {
+  position: relative;
+  overflow: hidden;
+}
+
+button::after, a.inline-flex::after, a.inline-block::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.2, 0, 0, 1);
+  pointer-events: none;
+}
+
+button:hover::after, a.inline-flex:hover::after, a.inline-block:hover::after {
+  opacity: 0.08;
+}
+
+button:active::after, a.inline-flex:active::after, a.inline-block:active::after {
+  opacity: 0.12;
+}
+
+/* Input Shake animation */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+  100% { transform: translateX(0); }
+}
+.shake {
+  animation: shake 150ms ease-in-out 3;
+}

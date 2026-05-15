@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password_hash String
+  role          String   // ADMIN, TEAM, JURY, ORGANIZER
+
+  teamMembers   TeamMember[]
+  evaluations   EvaluationAssignment[]
+  createdAt     DateTime @default(now())
+}
+
+model Tournament {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  rules       String
+  start_date  DateTime?
+  reg_start   DateTime
+  reg_end     DateTime
+  max_teams   Int?
+  status      String   @default("DRAFT") // DRAFT, REGISTRATION, RUNNING, FINISHED
+  
+  teams       Team[]
+  rounds      Round[]
+  createdAt   DateTime @default(now())
+}
+
+model Team {
+  id               String   @id @default(uuid())
+  tournament_id    String
+  team_name        String
+  city_school      String?
+  telegram_discord String?
+  is_locked        Boolean  @default(false)
+  
+  tournament       Tournament @relation(fields: [tournament_id], references: [id])
+  members          TeamMember[]
+  submissions      Submission[]
+  createdAt        DateTime @default(now())
+
+  @@unique([tournament_id, team_name])
+}
+
+model TeamMember {
+  id         String   @id @default(uuid())
+  team_id    String
+  user_id    String?  // Can be linked to a registered user
+  full_name  String
+  email      String
+  is_captain Boolean  @default(false)
+
+  team       Team     @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [user_id], references: [id])
+}
+
+model Round {
+  id                String   @id @default(uuid())
+  tournament_id     String
+  title             String
+  description       String
+  tech_requirements String
+  must_have_criteria String  // JSON array stored as string
+  start_time        DateTime
+  end_time          DateTime
+  status            String   @default("DRAFT") // DRAFT, ACTIVE, SUBMISSION_CLOSED, EVALUATED
+
+  tournament        Tournament @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  submissions       Submission[]
+}
+
+model Submission {
+  id             String   @id @default(uuid())
+  round_id       String
+  team_id        String
+  github_url     String
+  video_url      String
+  live_demo_url  String?
+  summary        String?
+  submitted_at   DateTime @default(now())
+
+  round          Round    @relation(fields: [round_id], references: [id], onDelete: Cascade)
+  team           Team     @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  evaluations    EvaluationAssignment[]
+}
+
+model EvaluationAssignment {
+  id             String   @id @default(uuid())
+  submission_id  String
+  jury_id        String
+  status         String   @default("PENDING") // PENDING, COMPLETED
+
+  submission     Submission @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+  jury           User       @relation(fields: [jury_id], references: [id], onDelete: Cascade)
+  score          Score?
+}
+
+model Score {
+  id                     String   @id @default(uuid())
+  assignment_id          String   @unique
+  tech_backend           Int
+  tech_database          Int
+  tech_frontend          Int
+  func_must_have         Int
+  func_bugs              Int
+  func_ux                Int
+  comments               String
+  total_calculated_score Float
+
+  assignment             EvaluationAssignment @relation(fields: [assignment_id], references: [id], onDelete: Cascade)
+}
